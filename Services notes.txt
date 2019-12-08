@@ -1,0 +1,38 @@
+How to install services -
+ The services doesn't have a debig console and it doesn't show the console log
+ so the question arrises how are we going to see what this messages are?
+--Solution is to use SeriLog.aspnetcore
+it will help me to log in a text file
+SeriLog.sinks.File  - to log into afile
+
+
+One more thing to do before we are going to use this as windows Service.
+
+On think why it is called a Worker Service not as Windows service.
+It can run as Service in Windows service, Deamon in Linux and run in Azure.
+
+To make sure to work as Windows Service, we need to install nuget package - 
+Microsoft.extensions.hosting.windowsservices
+ - this will allow us to configure it as a windows service.
+
+
+How to deploy - 
+We gonna do it the manual way
+if you have azureDevOps you can have a process do it automatically for you which is better
+- for devlopment purposes we can right click on the soln and click publish - use the location you want.
+- If you notice it uses the Release configuration here, and
+- the deployment mode is Framework Dependent meaning that it depends on the .netcoreapp3.1 sdk to run
+
+-- If you chek the folder it has projectNAme.dll and .exe file - hte release version of the appliation. Meaning PROD ready.
+
+
+How to get this run in our services?
+-- if you run the .exe file it will run as the consoleApp - Logging into the File
+So to run the Worker service in Windows we have to register the service.
+Run the powerShell(Administrator)
+use command sc - service controller manager tool, start= auto - means it will start automatically when windows does.
+use command sc.exe create WebsiteStatus binpath= c:\temp\workerservice\websiteStatus.exe start= auto
+
+So How do you republish the service
+- stop the service which calls the stopAsync Call to dispose everything
+sc.exe delete WebsiteStatus
