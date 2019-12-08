@@ -31,11 +31,29 @@ namespace WebsiteStatus
             return base.StartAsync(cancellationToken);
         }
 
+        public override Task StopAsync(CancellationToken cancellationToken)
+        {
+            client.Dispose();
+            _logger.LogInformation("Ther Service has been stopped...");
+            return base.StopAsync(cancellationToken);
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var result = await client.GetAsync("https://www.iamtimcorey.com");
+                var result = await client.GetAsync("https://www.youtube.com");
+                if (result.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("The website is up. Status Code {StatusCode}", result.StatusCode);
+                }
+                else
+                {
+                    // This is not the right way, rather you can have is DBLogging.
+                    // And also you can send a Email saying the Website is down.
+                    // Or a text Messsage
+                    _logger.LogError("The Wenbsite is down. Status code {StatusCode}", result.StatusCode);
+                }
 ;                await Task.Delay(5000, stoppingToken);
             }
         }
